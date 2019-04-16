@@ -17,4 +17,29 @@
     password: 'Qwerty@12345',
 }]
 
-module.exports = user;
+let chat = [{
+    id: '1234567890',
+    senderId: 'head@gmail.com.1',
+    receiverId: 'head2@gmail.com.2',
+    sender: 'head',
+    receiver: 'head2',
+    message: 'message successfully sent1 ',
+},
+{
+    id: '12345678901234567890',
+    senderId: 'head2@gmail.com.2',
+    receiverId: 'head@gmail.com.1',
+    sender: 'head2',
+    receiver: 'head',
+    message: 'message successfully sent2 ',
+},
+{
+    id: '123456789012345678901234567890',
+    senderId: 'head2@gmail.com.2',
+    receiverId: 'head3@gmail.com',
+    sender: 'head2',
+    receiver: 'head3',
+    message: 'message successfully sent ',
+},
+]
+module.exports = {user, chat};
