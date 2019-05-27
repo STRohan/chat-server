@@ -11,7 +11,7 @@ console.log("::::::", key);
 console.log("hi::", user);
 const resolvers = {
   Query: {
-    GetUsers: _ => {
+    GetUsers: () => {
       console.log("oooooooooooo", user);
       return user;
     },
@@ -59,8 +59,8 @@ const resolvers = {
       }
     },
 
-    AddChat: async (parent, { message, senderId, receiverId }) => {
-      let errorMessage = [];
+    AddChat: async  (parent, { message, senderId, receiverId }) => {
+let errorMessage = [];
 
       const senderValid = await user.find(element => element.id === senderId);
       const receiverValid = await user.find(
@@ -87,7 +87,7 @@ const resolvers = {
           status: "Message sent successfully" || errorMessage
         };
       }
-    },
+},
     DeleteChat: async (parent, { senderId, receiverId}) => {
         chat.filter(element => {
           element.senderId === senderId && element.receiverId === receiverId;

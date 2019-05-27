@@ -18,10 +18,24 @@ const typeDefs = gql`
     receiver: String!
     message: String
   }
+
   type Query {
     GetUsers: [User]
     AllChat: [Chat]
     GetChat(senderId: String!, receiverId: String!): [Chat]
+  }
+
+  type UserDetails {
+    message: String!
+    name: String
+    email: String
+    token: String
+  }
+
+  type ChatResponse {
+    sender: String
+    receiver: String
+    status: String!
   }
 
   type Mutation {
@@ -31,21 +45,8 @@ const typeDefs = gql`
       senderId: String!
       receiverId: String!
     ): ChatResponse!
-    DeleteChatBothSide(senderId: String!, receiverId: String!): ChatResponse!)
+    DeleteChatBothSide(senderId: String!, receiverId: String!): ChatResponse!
     DeleteChat(senderId: String!, receiverId: String!): ChatResponse!
-  }
-
-  type ChatResponse {
-    sender: String
-    receiver: String
-    status: String!
-  }
-
-  type UserDetails {
-    message: String!
-    name: String
-    email: String
-    token: String
   }
 `;
 
