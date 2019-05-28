@@ -2,6 +2,7 @@
 const jwt = require("jsonwebtoken");
 var { user, chat } = require("./constants");
 const uuidv4 = require("uuid/v4");
+const {pubSub} = require("./server");
 // const { find, filter } = require('lodash');
 
 // const key = process.env.KEY;
@@ -9,6 +10,11 @@ const key = "qwertyuiopasdfghjklzxcvbnm123456";
 console.log("::::::", key);
 
 console.log("hi::", user);
+
+const USER_ADDED = 'USER_ADDED';
+const NEW_MESSAGE = 'NEW_MESSAGE';
+const MESSAGE_SEND = 'MESSAGE_SEND';
+
 const resolvers = {
   Query: {
     GetUsers: () => {
@@ -50,6 +56,7 @@ const resolvers = {
         user.push(newUser);
         const token = await jwt.sign(newUser, key);
         console.log("--", token);
+        pubSub.publish(USER_ADDED, { newUser: newUser });
         return {
           message: "user added",
           name: `${newUser.name}`,
@@ -81,6 +88,7 @@ let errorMessage = [];
           message
         };
         chat.push(newChat);
+        pubSub.publish(NEW_MESSAGE, { newMessage: newChat });
         return {
           sender: newChat.sender,
           receiver: newChat.receiver,
@@ -105,6 +113,16 @@ let errorMessage = [];
         });
       return { status: 'Chat Deleted Successfully'};
     }
-  }
+  },
+  Subscription: {
+    userCreated: {
+      subscribe: () => pubSub.asyncIterator(USER_ADDED),
+    },
+
+    messageSent: {
+      subscribe: () => pubSub.asyncIterator(MESSAGE_SEND),
+    },
+  
+}
 };
 module.exports = resolvers;

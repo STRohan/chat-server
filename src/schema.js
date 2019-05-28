@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { gql } = require("apollo-server");
 
 // The GraphQL schema
 
@@ -48,6 +48,10 @@ const typeDefs = gql`
     DeleteChatBothSide(senderId: String!, receiverId: String!): ChatResponse!
     DeleteChat(senderId: String!, receiverId: String!): ChatResponse!
   }
-`;
+
+  type Subscription {
+    messageSent: Chat
+    userCreated: UserDetails
+}`;
 
 module.exports = typeDefs;
