@@ -8,10 +8,11 @@ const pubSub = new PubSub();
 const server = new ApolloServer({
     typeDefs,
     resolvers,
+    context: {pubSub}
 });
 
 server.listen().then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`)
 });
 
-module.exports = {pubSub};
+module.exports = {server};

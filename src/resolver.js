@@ -2,7 +2,7 @@
 const jwt = require("jsonwebtoken");
 var { user, chat } = require("./constants");
 const uuidv4 = require("uuid/v4");
-const {pubSub} = require("./server");
+const {server} = require("./server")
 // const { find, filter } = require('lodash');
 
 // const key = process.env.KEY;
@@ -18,15 +18,15 @@ const MESSAGE_SEND = 'MESSAGE_SEND';
 const resolvers = {
   Query: {
     GetUsers: () => {
-      console.log("oooooooooooo", user);
       return user;
     },
     AllChat: () => {
-      console.log("oooooooooooo", chat);
       return chat;
     },
+    GetUser: (parent, { email }) => {
+      return User.filter(data => data.email === email);
+    },
     GetChat: async (parent, { senderId, receiverId }) => {
-      console.log("in get chat");
 
       const findChat = chat.filter(
         element =>
@@ -34,12 +34,11 @@ const resolvers = {
             element.receiverId === receiverId) ||
           (element.senderId === receiverId && element.receiverId === senderId)
       );
-      console.log("chat message", findChat);
       return findChat;
     }
   },
   Mutation: {
-    AddUser: async (parent, { name, email, password }) => {
+    AddUser: async (parent, { name, email, password }, {pubSub}) => {
       let check = 0;
       user.forEach(item => {
         if (item.email === email) check++;
@@ -55,8 +54,10 @@ const resolvers = {
         };
         user.push(newUser);
         const token = await jwt.sign(newUser, key);
-        console.log("--", token);
-        pubSub.publish(USER_ADDED, { newUser: newUser });
+        pubSub.publish(USER_ADDED, {userCreated: {message: "user added",
+        name: `${newUser.name}`,
+        email: `${newUser.email}`,
+        token: `${token}`}} );
         return {
           message: "user added",
           name: `${newUser.name}`,
@@ -66,14 +67,11 @@ const resolvers = {
       }
     },
 
-    AddChat: async  (parent, { message, senderId, receiverId }) => {
-let errorMessage = [];
-
+    AddChat: async  (parent, { message, senderId, receiverId }, {pubSub}) => {
       const senderValid = await user.find(element => element.id === senderId);
       const receiverValid = await user.find(
         element => element.id === receiverId
       );
-
       if (senderValid === undefined)
         return { status: "the sender does not exist " };
       else if (receiverValid === undefined)
@@ -88,11 +86,11 @@ let errorMessage = [];
           message
         };
         chat.push(newChat);
-        pubSub.publish(NEW_MESSAGE, { newMessage: newChat });
+        pubSub.publish(NEW_MESSAGE, {userCreated: 'alpha' });
         return {
           sender: newChat.sender,
           receiver: newChat.receiver,
-          status: "Message sent successfully" || errorMessage
+          status: "Message sent successfully",
         };
       }
 },
@@ -116,11 +114,11 @@ let errorMessage = [];
   },
   Subscription: {
     userCreated: {
-      subscribe: () => pubSub.asyncIterator(USER_ADDED),
+      subscribe: (root, arg, {pubSub}) => pubSub.asyncIterator(USER_ADDED),
     },
 
     messageSent: {
-      subscribe: () => pubSub.asyncIterator(MESSAGE_SEND),
+      subscribe: (root, arg, {pubSub}) => pubSub.asyncIterator(MESSAGE_SEND),
     },
   
 }

@@ -21,6 +21,7 @@ const typeDefs = gql`
 
   type Query {
     GetUsers: [User]
+    GetUser(email: String!): [User]
     AllChat: [Chat]
     GetChat(senderId: String!, receiverId: String!): [Chat]
   }
