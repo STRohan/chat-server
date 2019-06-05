@@ -86,7 +86,7 @@ const resolvers = {
           message
         };
         chat.push(newChat);
-        pubSub.publish(NEW_MESSAGE, {userCreated: 'alpha' });
+        pubSub.publish(MESSAGE_SEND, {messageSent: `${message}` });
         return {
           sender: newChat.sender,
           receiver: newChat.receiver,

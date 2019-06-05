@@ -51,7 +51,7 @@ const typeDefs = gql`
   }
 
   type Subscription {
-    messageSent: Chat
+    messageSent: String!
     userCreated: UserDetails
 }`;
 
